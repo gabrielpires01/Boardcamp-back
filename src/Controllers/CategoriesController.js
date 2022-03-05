@@ -14,7 +14,7 @@ const PostCategories = async(req,res) => {
 
 	try {
 		const categories = await db.query('SELECT * FROM categories WHERE name=$1',[name]);
-		if (categories.rows) {
+		if (categories.rows.length) {
 			return res.sendStatus(409)
 		}
 		await db.query(`INSERT INTO categories (name) 
