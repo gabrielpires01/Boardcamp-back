@@ -1,8 +1,15 @@
 import db from "../Database/Database.js"
 
 const GetGames = async(req,res) => {
+
+	let expression = '';
+	if (req.query.name) {
+
+		expression = 'WHERE name iLIKE ' + `'${req.query.name}%'`
+	}
+
 	try {
-		const games = await db.query(`SELECT * FROM games`);
+		const games = await db.query(`SELECT * FROM games ${expression}`);
 		return res.send(games.rows)
 	}catch(err) {
 		return res.status(500).send(err)
