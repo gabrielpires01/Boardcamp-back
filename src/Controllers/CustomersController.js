@@ -20,6 +20,7 @@ const GetOneCustomer = async(req,res) => {
 
 	try {
 		const clients = await db.query(`SELECT * FROM customers WHERE id=$1`, [id]);
+		if (!clients.rowCount) return res.sendStatus(404)
 
 		return res.send(clients.rows[0])
 	} catch(err) {
