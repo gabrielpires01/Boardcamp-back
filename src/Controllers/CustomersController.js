@@ -15,4 +15,16 @@ const GetCustomers = async(req,res) => {
 	}
 };
 
-export { GetCustomers };
+const GetOneCustomer = async(req,res) => {
+	const { id } = req.params;
+
+	try {
+		const clients = await db.query(`SELECT * FROM customers WHERE id=$1`, [id]);
+
+		return res.send(clients.rows[0])
+	} catch(err) {
+		return res.status(500).send(err)
+	}
+}
+
+export { GetCustomers, GetOneCustomer };
