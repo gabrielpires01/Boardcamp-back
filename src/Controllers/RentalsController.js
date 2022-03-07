@@ -45,9 +45,7 @@ const PostRentals = async(req,res) => {
 	const { customerId, gameId, daysRented } = req.body;
 
 	let rentDate = new Date();
-	rentDate = rentDate.toLocaleDateString("en-GB").split('T')[0];
 
-	
 	if (daysRented < 1) return res.sendStatus(400)
 
 	try {
@@ -76,6 +74,37 @@ const PostRentals = async(req,res) => {
 	}catch(err) {
 		return res.status(500).send(err)
 	}
+};
+
+const ReturnRentals = async(req,res) => {
+	const { id } = req.params;
+
+	let date = new Date();
+	
+	let delayFee = 0;
+	try {
+		const rental = await db.query(`SELECT * FROM rentals WHERE id = $1`,[id])
+		
+		if(!rental.rowCount) return res.sendStatus(404)
+		if(rental.rows[0].returnDate) return res.sendStatus(400)
+
+		const game = await db.query('SELECT * FROM games WHERE id = $1', [rental.rows[0].gameId])
+
+		const returnDate = date - rental.rows[0].rentDate ;
+		const daysPassed = Math.floor(returnDate/864000000);//Ms to Days
+
+		if(daysPassed > rental.rows[0].daysRented) {
+			delayFee = daysPassed*game.rows[0].pricePerDay
+		}
+
+		await db.query(`UPDATE rentals
+							SET "returnDate" = $1, "delayFee" = $2
+						WHERE id = $3`,[date, delayFee, id])
+		
+		return res.sendStatus(200)
+	}catch(err) {
+		return res.status(500).send(err)
+	}
 }
 
-export { GetRentals, PostRentals };
+export { GetRentals, PostRentals, ReturnRentals };
