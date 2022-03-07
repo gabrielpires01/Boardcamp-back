@@ -4,9 +4,9 @@ const GetRentals = async(req,res) => {
 	let customerId = '';
 	let gameId = '';
 	if (req.query.customerId) {
-		customerId = 'WHERE customerId = ' + `${req.query.customerId}`
+		customerId = 'WHERE "customerId" = ' + `${req.query.customerId}`
 	} else if (req.query.gameId) {
-		gameId = 'WHERE gameId = ' + `${req.query.gameId}`
+		gameId = 'WHERE "gameId" = ' + `${req.query.gameId}`
 	}
 
 
