@@ -60,7 +60,7 @@ const PostRentals = async(req,res) => {
 		const rentals = await db.query(`SELECT * FROM rentals 
 										WHERE "gameId" = $1 AND "returnDate" IS NULL`, [game.rows[0].id,])
 
-		if(rentals.rowCount >= Number(game.rows[0].stockTotal) ) {
+		if(rentals.rowCount + 1 >= Number(game.rows[0].stockTotal) ) {
 			return res.sendStatus(400)
 		}
 
@@ -107,4 +107,20 @@ const ReturnRentals = async(req,res) => {
 	}
 }
 
-export { GetRentals, PostRentals, ReturnRentals };
+const DeleteRentals = async(req,res) => {
+	const { id } = req.params;
+
+	try {
+		const rental = await db.query(`SELECT * FROM rentals WHERE id = $1`,[id])
+		if(!rental.rowCount) return res.sendStatus(404)
+		if(rental.rows[0].returnDate) return res.sendStatus(400)
+
+		await db.query(`DELETE FROM rentals WHERE id = $1`, [id])
+
+		return res.sendStatus(200)
+	}catch(err) {
+		return res.status(500).send(err)
+	}
+}
+
+export { GetRentals, PostRentals, ReturnRentals, DeleteRentals };
