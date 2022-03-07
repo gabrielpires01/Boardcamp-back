@@ -8,6 +8,6 @@ app.use(json());
 
 app.use(router);
 
-app.listen(5000, () => {
-	console.log("Listening on 5000")
+app.listen(4000, () => {
+	console.log("Listening on 4000")
 })
